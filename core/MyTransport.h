@@ -215,6 +215,9 @@
 #if defined(MY_RS485)
 #error Receive message buffering not supported for RS485!
 #endif
+#if defined(MY_CRESSON)
+#error Receive message buffering not supported for CRESSON!
+#endif
 #if defined(MY_RADIO_NRF5_ESB)
 #error Receive message buffering not supported for NRF5 radio! Please define MY_NRF5_RX_BUFFER_SIZE
 #endif

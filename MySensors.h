@@ -246,8 +246,13 @@ MY_DEFAULT_RX_LED_PIN in your sketch instead to enable LEDs
 #else
 #define __RS485CNT 0	//!< __RS485CNT
 #endif
+#if defined(MY_CRESSON)
+#define __CRESSONCNT 1	//!< __CRESSONCNT
+#else
+#define __CRESSONCNT 0	//!< __CRESSONCNT
+#endif
 
-#if (__RF24CNT + __NRF5ESBCNT + __RFM69CNT + __RFM95CNT + __RS485CNT > 1)
+#if (__RF24CNT + __NRF5ESBCNT + __RFM69CNT + __RFM95CNT + __RS485CNT + __CRESSONCNT > 1)
 #error Only one forward link driver can be activated
 #endif
 #endif //DOXYGEN
@@ -258,7 +263,7 @@ MY_DEFAULT_RX_LED_PIN in your sketch instead to enable LEDs
 #endif
 
 // TRANSPORT INCLUDES
-#if defined(MY_RADIO_RF24) || defined(MY_RADIO_NRF5_ESB) || defined(MY_RADIO_RFM69) || defined(MY_RADIO_RFM95) || defined(MY_RS485)
+#if defined(MY_RADIO_RF24) || defined(MY_RADIO_NRF5_ESB) || defined(MY_RADIO_RFM69) || defined(MY_RADIO_RFM95) || defined(MY_RS485) || defined(MY_CRESSON)
 #include "hal/transport/MyTransportHAL.h"
 #include "core/MyTransport.h"
 
@@ -351,6 +356,18 @@ MY_DEFAULT_RX_LED_PIN in your sketch instead to enable LEDs
 #endif
 #include "drivers/RFM95/RFM95.cpp"
 #include "hal/transport/MyTransportRFM95.cpp"
+#elif defined(MY_CRESSON)
+#include <crstream.h>
+#if !defined(MY_CRESSON_HWSERIAL)
+#include <SoftwareSerial.h>
+#if !defined(MY_CRESSON_RX_PIN)
+#error The CRESSON transport is not configured as HWSERIAL, you must specify MY_CRESSON_RX_PIN for Software Serial link
+#endif
+#if !defined(MY_CRESSON_TX_PIN)
+#error The CRESSON transport is not configured as HWSERIAL, you must specify MY_CRESSON_TX_PIN for Software Serial link
+#endif
+#endif
+#include "hal/transport/MyTransportCresson.cpp"
 #endif
 
 // PASSIVE MODE
