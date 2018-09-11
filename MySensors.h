@@ -361,10 +361,10 @@ MY_DEFAULT_RX_LED_PIN in your sketch instead to enable LEDs
 #if !defined(MY_CRESSON_HWSERIAL)
 #include <SoftwareSerial.h>
 #if !defined(MY_CRESSON_RX_PIN)
-#error The CRESSON transport is not configured as HWSERIAL, you must specify MY_CRESSON_RX_PIN for Software Serial link
+#error The CRESSON transport is not configured as HWSERIAL, you must specify MY_CRESSON_RX_PIN (MCU TX pin)
 #endif
 #if !defined(MY_CRESSON_TX_PIN)
-#error The CRESSON transport is not configured as HWSERIAL, you must specify MY_CRESSON_TX_PIN for Software Serial link
+#error The CRESSON transport is not configured as HWSERIAL, you must specify MY_CRESSON_TX_PIN (MCU RX pin)
 #endif
 #endif
 #include "hal/transport/MyTransportCresson.cpp"

@@ -255,6 +255,12 @@
 #define MY_CRESSON_MAX_MESSAGE_LENGTH (40)
 #endif
 
+#ifdef MY_CRESSON
+#define MY_PARENT_NODE_IS_STATIC
+#define MY_PARENT_NODE_ID         0 //GATEWAY_ADDRESS
+#define MY_TRANSPORT_UPLINK_CHECK_DISABLED
+#endif
+
 /**
  * @defgroup RF24SettingGrpPub RF24
  * @ingroup RadioSettingGrpPub

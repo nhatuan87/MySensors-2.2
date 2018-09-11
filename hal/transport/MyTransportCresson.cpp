@@ -17,17 +17,21 @@
 HardwareSerial& _dev = MY_CRESSON_HWSERIAL;
 crstream<>		cresson(_dev);
 #else
-SoftwareSerial 	_dev(MY_CRESSON_RX_PIN, MY_CRESSON_TX_PIN);
+SoftwareSerial 	_dev(MY_CRESSON_TX_PIN, MY_CRESSON_RX_PIN);
 crstream<SoftwareSerial>		cresson(_dev);
 #endif
 
 uint8_t _packet_len;
+int16_t _rcv_rssi;
 char _data[MY_CRESSON_MAX_MESSAGE_LENGTH];
 
-void packetReceived() {
+void cresson_onReceived() {
 	_packet_len = cresson.length();
-	for (uint8_t i=0; i<_packet_len; i++) {
-		cresson >> _data[i];
+	_rcv_rssi   = cresson.rssi();
+	if (_packet_len <= MY_CRESSON_MAX_MESSAGE_LENGTH) {
+		for (uint8_t i=0; i<_packet_len; i++) {
+			cresson >> _data[i];
+		}
 	}
 }
 
@@ -45,7 +49,6 @@ bool transportSend(const uint8_t to, const void* data, const uint8_t len, const 
 
 bool transportInit(void)
 {
-	cresson.receivedCallback(packetReceived);
 	return true;
 }
 
@@ -53,7 +56,7 @@ void transportSetAddress(const uint8_t address)
 {
 	cresson.selfID = (uint16_t) address;
 	cresson.writecmd(P_sysreg, 2, 0x01, address);
-	cresson.flush();
+	cresson.execute();
 }
 
 uint8_t transportGetAddress(void)
@@ -108,8 +111,7 @@ int16_t transportGetSendingRSSI(void)
 
 int16_t transportGetReceivingRSSI(void)
 {
-	// not implemented
-	return INVALID_RSSI;
+	return _rcv_rssi;
 }
 
 int16_t transportGetSendingSNR(void)
