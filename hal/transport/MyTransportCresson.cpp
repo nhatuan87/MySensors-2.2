@@ -32,6 +32,8 @@ void cresson_onReceived() {
 		for (uint8_t i=0; i<_packet_len; i++) {
 			cresson >> _data[i];
 		}
+	} else {
+		_packet_len = 0;
 	}
 }
 
@@ -49,7 +51,8 @@ bool transportSend(const uint8_t to, const void* data, const uint8_t len, const 
 
 bool transportInit(void)
 {
-	return true;
+  	cresson.begin();
+	return cresson.isAlive();
 }
 
 void transportSetAddress(const uint8_t address)
@@ -66,7 +69,7 @@ uint8_t transportGetAddress(void)
 
 bool transportAvailable(void)
 {
-	return cresson.listen();
+	return cresson.listen() and _packet_len > 0;
 }
 
 bool transportSanityCheck(void)
