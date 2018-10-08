@@ -74,9 +74,7 @@
 #include <MySensors.h>
 
 void before() {
-  cresson.baudmode = BAUD_19200;
   cresson.mhmode = MHMASTER;
-  cresson.begin();
 }
 
 void setup()

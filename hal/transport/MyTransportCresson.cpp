@@ -26,14 +26,12 @@ int16_t _rcv_rssi;
 char _data[MY_CRESSON_MAX_MESSAGE_LENGTH];
 
 void cresson_onReceived() {
-	_packet_len = cresson.length();
 	_rcv_rssi   = cresson.rssi();
-	if (_packet_len <= MY_CRESSON_MAX_MESSAGE_LENGTH) {
-		for (uint8_t i=0; i<_packet_len; i++) {
-			cresson >> _data[i];
-		}
-	} else {
-		_packet_len = 0;
+}
+
+void cresson_onReceiving() {
+	if (cresson.length() <= MY_CRESSON_MAX_MESSAGE_LENGTH) {
+		while (cresson.available()) cresson >> _data[_packet_len++];
 	}
 }
 

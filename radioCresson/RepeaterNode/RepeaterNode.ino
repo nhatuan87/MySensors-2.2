@@ -31,38 +31,75 @@
 // Enable debug prints to serial monitor
 #define MY_DEBUG
 
-// Enable Cresson transport layer
+// Enable and select radio type attached
 #define MY_CRESSON
 
 #if defined(HAVE_HWSERIAL1)
   #define MY_CRESSON_HWSERIAL Serial1
 #else
-  #define MY_CRESSON_HWSERIAL Serial
+  #define MY_CRESSON_TX_PIN   7
+  #define MY_CRESSON_RX_PIN   8
 #endif
 
-// Enabled repeater feature for this node
-//#define MY_REPEATER_FEATURE
+#define MINUTE 60000
+uint32_t SLEEP_TIME = 15*MINUTE; // Sleep time between reports (in milliseconds)
 
 #include <MySensors.h>
+#include <uniqueID.h>
 
 void before() {
-  cresson.baudmode = BAUD_19200;
+  cresson.selfID = uniqueID() % 254 + 1; // 1 ~ 254
   cresson.mhmode = MHREPEATER;
-  cresson.begin();
+  hwWriteConfig(EEPROM_NODE_ID_ADDRESS, cresson.selfID);
 }
 
 void setup()
 {
-
 }
 
 void presentation()
 {
 	//Send the sensor node sketch version information to the gateway
-	sendSketchInfo("Repeater Node", "1.0");
+	sendSketchInfo("CMEV Repeater Node", "2.0");
+  present(0, S_ARDUINO_REPEATER_NODE);
 }
+
+uint16_t oldBatteryVolt = 0; // mV
 
 void loop()
 {
+  uint32_t localtime = millis();
+  
+  uint16_t batteryVolt = hwCPUVoltage(); // mV
+  uint8_t batteryPcnt = batteryPercent(batteryVolt);
+  
+#ifdef MY_DEBUG
+  Serial.print("Battery Voltage: ");
+  Serial.print(batteryVolt);
+  Serial.println(" mV");
+
+  Serial.print("Battery percent: ");
+  Serial.print(batteryPcnt, DEC);
+  Serial.println(" %");
+#endif
+
+  if (oldBatteryVolt != batteryVolt) {
+    sendBatteryLevel(batteryPcnt);
+    oldBatteryVolt = batteryVolt;
+  }
+  
+  // Sleep CPU
+  hwSleep(SLEEP_TIME + localtime - millis());
 }
 
+uint8_t batteryPercent(uint16_t batVolt) {
+  const uint16_t BATPCNT_100 = 13200;
+  const uint16_t BATPCNT_0   = 10500;
+  if (batVolt >= BATPCNT_100) {
+    return 100;
+  } else if (batVolt <= BATPCNT_0) {
+    return 0;
+  } else {
+    return (uint8_t)map(batVolt, BATPCNT_0, BATPCNT_100,  0,  100);
+  }
+}

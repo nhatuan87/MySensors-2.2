@@ -14,17 +14,17 @@
 #include <MySensors.h>
 #include <uniqueID.h>
 
-uint32_t SLEEP_TIME = 60000; // Sleep time between reports (in milliseconds)
+#define MINUTE                60000
 #define DIGITAL_INPUT_SENSOR  2   // The digital input you attached your motion sensor.  (Only 2 and 3 generates interrupt!)
-#define CHILD_ID 1   // Id of the sensor child
+#define CHILD_ID              0   // Id of the sensor child
+
+uint32_t SLEEP_TIME = 1*MINUTE; // Sleep time between reports (in milliseconds)
 
 // Initialize motion message
 MyMessage msg(CHILD_ID, V_TRIPPED);
 
 void before() {
-  cresson.selfID = uniqueID() & 0x00FF;
-  cresson.destID = GATEWAY_ADDRESS;
-  cresson.begin();
+  cresson.selfID = uniqueID() % 254 + 1; // 1 ~ 254
   hwWriteConfig(EEPROM_NODE_ID_ADDRESS, cresson.selfID);
 }
 

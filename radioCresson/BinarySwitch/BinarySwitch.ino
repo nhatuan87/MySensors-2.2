@@ -14,7 +14,7 @@
 #include <MySensors.h>
 #include <uniqueID.h>
 
-#define CHILD_ID_SWITCH 1
+#define CHILD_ID_SWITCH 0
 
 #define EPROM_SWITCH_STATE 1
 
@@ -31,9 +31,7 @@ int16_t LastSwitchState=Switch_OFF;
 MyMessage SwitchMsg(CHILD_ID_SWITCH, V_STATUS);
 
 void before() {
-  cresson.selfID = uniqueID() & 0x00FF;
-  cresson.destID = GATEWAY_ADDRESS;
-  cresson.begin();
+  cresson.selfID = uniqueID() % 254 + 1; // 1 ~ 254
   hwWriteConfig(EEPROM_NODE_ID_ADDRESS, cresson.selfID);
 }
 
