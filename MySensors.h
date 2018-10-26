@@ -311,7 +311,7 @@ MY_DEFAULT_RX_LED_PIN in your sketch instead to enable LEDs
 
 // POWER PIN
 #ifndef DOXYGEN
-#if defined(MY_RF24_POWER_PIN) || defined(MY_RFM69_POWER_PIN) || defined(MY_RFM95_POWER_PIN) || defined(MY_RADIO_NRF5_ESB)
+#if defined(MY_RF24_POWER_PIN) || defined(MY_RFM69_POWER_PIN) || defined(MY_RFM95_POWER_PIN) || defined(MY_RADIO_NRF5_ESB) || defined(MY_CRESSON_POWER_PIN)
 #define RADIO_CAN_POWER_OFF (true)
 #else
 #define RADIO_CAN_POWER_OFF (false)

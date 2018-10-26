@@ -14,11 +14,19 @@
 #include "MyTransportHAL.h"
 
 #if defined(MY_CRESSON_HWSERIAL)
-HardwareSerial& _dev = MY_CRESSON_HWSERIAL;
-crstream<>		cresson(_dev);
+	HardwareSerial& _dev = MY_CRESSON_HWSERIAL;
+	#if defined(MY_CRESSON_POWER_PIN)
+	crstream<>		cresson(_dev, MY_CRESSON_POWER_PIN);
+	#else
+	crstream<>		cresson(_dev);
+	#endif
 #else
-SoftwareSerial 	_dev(MY_CRESSON_TX_PIN, MY_CRESSON_RX_PIN);
-crstream<SoftwareSerial>		cresson(_dev);
+	SoftwareSerial 	_dev(MY_CRESSON_TX_PIN, MY_CRESSON_RX_PIN);
+	#if defined(MY_CRESSON_POWER_PIN)
+		crstream<SoftwareSerial>		cresson(_dev, MY_CRESSON_POWER_PIN);
+	#else
+		crstream<SoftwareSerial>		cresson(_dev);
+	#endif
 #endif
 
 uint8_t _packet_len;
@@ -49,6 +57,7 @@ bool transportSend(const uint8_t to, const void* data, const uint8_t len, const 
 
 bool transportInit(void)
 {
+	cresson.powerOn();
   	cresson.begin();
 	return cresson.isAlive();
 }
@@ -88,12 +97,12 @@ uint8_t transportReceive(void* data)
 
 void transportPowerDown(void)
 {
-	transportSleep();
+	cresson.powerOff();
 }
 
 void transportPowerUp(void)
 {
-	transportStandBy();
+	cresson.powerOn();
 }
 void transportSleep(void)
 {
