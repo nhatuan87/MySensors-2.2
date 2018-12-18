@@ -57,7 +57,6 @@ bool transportSend(const uint8_t to, const void* data, const uint8_t len, const 
 
 bool transportInit(void)
 {
-	cresson.powerOn();
   	cresson.begin();
 	return cresson.isAlive();
 }

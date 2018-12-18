@@ -4,7 +4,7 @@
 // Enable Cresson transport layer
 #define MY_CRESSON
 
-#if defined(HAVE_HWSERIAL1)
+#if defined(ARDUINO_ARCH_AVR) && defined(HAVE_HWSERIAL1)
   #define MY_CRESSON_HWSERIAL Serial1
 #else
   #define MY_CRESSON_TX_PIN   3

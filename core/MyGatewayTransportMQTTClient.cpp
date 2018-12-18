@@ -146,6 +146,7 @@ bool gatewayTransportInit(void)
 	_MQTT_client.setCallback(incomingMQTT);
 
 #if defined(MY_GATEWAY_ESP8266)
+#if defined(MY_ESP8266_SSID)
 	// Turn off access point
 	WiFi.mode(WIFI_STA);
 #if defined(MY_ESP8266_HOSTNAME)
@@ -158,6 +159,7 @@ bool gatewayTransportInit(void)
 #define MY_ESP8266_BSSID NULL
 #endif
 	(void)WiFi.begin(MY_ESP8266_SSID, MY_ESP8266_PASSWORD, 0, MY_ESP8266_BSSID);
+#endif /* End of MY_ESP8266_SSID */
 #endif /* End of MY_GATEWAY_ESP8266 */
 
 	gatewayTransportConnect();
